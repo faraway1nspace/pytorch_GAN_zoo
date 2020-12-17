@@ -1,5 +1,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import os
+import albumentations as A
+import cv2
 
 from ..DCGAN import DCGAN
 from .gan_trainer import GANTrainer
