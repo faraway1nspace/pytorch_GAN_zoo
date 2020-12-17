@@ -24,6 +24,33 @@ def getTrainer(name):
                       match[name][1],
                       prefix='')
 
+class AlbumentationsTransformations(object):
+    """Omnibus class that does all the transformations, see if it can be passed to DataSet"""
+    def __init__(self, size):
+        if isinstance(size,int):
+            size = (size,size)
+        self.A_Compose = A.Compose([A.RandomGridShuffle(always_apply=False, p=0.05, grid=(2, 2)),
+                       A.transforms.GridDistortion(num_steps=5, distort_limit=0.4, p=0.5),
+                       A.HorizontalFlip(p=0.5),
+                       A.RandomResizedCrop(always_apply=True, p=1.0, height=size[0], width=size[0],
+                                         scale=(0.75, 1),
+                                         ratio=(0.98, 1.02), interpolation=3),#ONLY 3 SEEMS TO WORK
+                       A.transforms.ColorJitter(brightness=0.05, contrast=0.07, saturation=0.04, hue=0.07, always_apply=False, p=0.6),#HSV random
+                       A.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                       ToTensorV2()
+                       ])
+    
+    def __call__(self, PIL_image):
+        transformed_image_dict = self.A_Compose(image = np.array(PIL_image))
+        return transformed_image_dict['image']
+    
+    def __repr__(self):
+        format_string = self.__class__.__name__ + '('
+        for t in self.transforms:
+            format_string += '\n'
+            format_string += '    {0}'.format(t)
+        format_string += '\n)'
+        return format_string
 
 if __name__ == "__main__":
 
@@ -117,7 +144,7 @@ if __name__ == "__main__":
 
     partitionValue = getVal(kwargs, "partition_value",
                             trainingConfig.get("partitionValue", None))
-
+    
     GANTrainer = trainerModule(pathDB,
                                useGPU=True,
                                visualisation=vis_module,
