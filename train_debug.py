@@ -1,4 +1,25 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
+# this version is my own, it is made so I can print the kwargs
+
+# to run: 
+#cd ~/Documents/ScriptsPrograms/ml_art/bin/gan_zoo_pytorch/pytorch_GAN_zoo
+#config = {"pathDB": "../../data/"}
+#config["config"] = {}
+#with open("config_" + "test" + ".json", 'w') as file:
+#   json.dump(config, file, indent=2)
+
+# DCGAN: how to rund
+#python3.6 train_debug.py DCGAN -c config_test.json -d ../output_networks -n test1 --np_vis
+# this prints
+# kwargs = {'model_name': 'DCGAN', 'no_vis': False, 'np_vis': True, 'restart': False, 'name': 'test1', 'dir': '../output_networks', 'configPath': 'config_test.json', 'saveIter': 16000, 'evalIter': 100, 'Scale_iter': None, 'partition_value': None, 'depth': None, 'miniBatchSize': None, 'dimLatentVector': None, 'dimOutput': None, 'dimG': None, 'dimD': None, 'lossMode': None, 'lambdaGP': None, 'sigmaNoise': None, 'epsilonD': None, 'baseLearningRate': None, 'weightConditionG': None, 'weightConditionD': None, 'GDPP': None, 'nEpoch': None, 'overrides': False}
+# trainingConfig = {'config': {}}
+# arguments for GANTrainer = trainerModule 'visualisation':need to import vis_module = importlib.import_module("visualization.np_visualizer"),'lossIterEvaluation':100,'checkPointDir':../output_networks/test1,'saveIter':16000,'modelLabel':test1,'partitionValue':None
+
+# PGAN how to run
+#>python3.6 train_debug.py PGAN -c config_test.json -d ../output_networks -n test4 --np_vis
+# ... this prints
+# kwags = {'model_name': 'PGAN', 'no_vis': False, 'np_vis': True, 'restart': False, 'name': 'test4', 'dir': '../output_networks', 'configPath': 'config_test.json', 'saveIter': 16000, 'evalIter': 100, 'Scale_iter': None, 'partition_value': None, 'maxIterAtScale': None, 'alphaJumpMode': None, 'iterAlphaJump': None, 'alphaJumpVals': None, 'alphaNJumps': None, 'alphaSizeJumps': None, 'depthScales': None, 'miniBatchSize': None, 'dimLatentVector': None, 'initBiasToZero': None, 'perChannelNormalization': None, 'lossMode': None, 'lambdaGP': None, 'leakyness': None, 'epsilonD': None, 'miniBatchStdDev': None, 'baseLearningRate': None, 'dimOutput': None, 'weightConditionG': None, 'weightConditionD': None, 'GDPP': None, 'overrides': False}
+# trainingConfig = {'config': {}}
+
 import os
 import sys
 import importlib
@@ -24,33 +45,6 @@ def getTrainer(name):
                       match[name][1],
                       prefix='')
 
-class AlbumentationsTransformations(object):
-    """Omnibus class that does all the transformations, see if it can be passed to DataSet"""
-    def __init__(self, size):
-        if isinstance(size,int):
-            size = (size,size)
-        self.A_Compose = A.Compose([A.RandomGridShuffle(always_apply=False, p=0.05, grid=(2, 2)),
-                       A.transforms.GridDistortion(num_steps=5, distort_limit=0.4, p=0.5),
-                       A.HorizontalFlip(p=0.5),
-                       A.RandomResizedCrop(always_apply=True, p=1.0, height=size[0], width=size[0],
-                                         scale=(0.75, 1),
-                                         ratio=(0.98, 1.02), interpolation=3),#ONLY 3 SEEMS TO WORK
-                       A.transforms.ColorJitter(brightness=0.05, contrast=0.07, saturation=0.04, hue=0.07, always_apply=False, p=0.6),#HSV random
-                       A.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                       ToTensorV2()
-                       ])
-    
-    def __call__(self, PIL_image):
-        transformed_image_dict = self.A_Compose(image = np.array(PIL_image))
-        return transformed_image_dict['image']
-    
-    def __repr__(self):
-        format_string = self.__class__.__name__ + '('
-        for t in self.transforms:
-            format_string += '\n'
-            format_string += '    {0}'.format(t)
-        format_string += '\n)'
-        return format_string
 
 if __name__ == "__main__":
 
@@ -80,8 +74,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--eval_iter', help="If it applies, frequence at\
                         which a checkpoint should be saved",
                         type=int, dest="evalIter", default=100)
-    parser.add_argument('-S', '--Scale_iter', help="If it applies, scale to work\
-                        on")
+    parser.add_argument('-S', '--Scale_iter', help="If it applies, scale to work on")
     parser.add_argument('-v', '--partitionValue', help="Partition's value",
                         type=str, dest="partition_value")
 
@@ -97,6 +90,15 @@ if __name__ == "__main__":
     # done via the command line
     parser = updateParserWithConfig(parser, trainerModule._defaultConfig)
     kwargs = vars(parser.parse_args())
+    
+    # my edits
+    rob_kluge=True
+    if rob_kluge:
+        print("rob kluge: kwargs arguments:")
+        print(kwargs)
+        print('done rob kluge, existing')
+        #sys.exit()
+    
     configOverride = getConfigOverrideFromParser(
         kwargs, trainerModule._defaultConfig)
 
@@ -129,7 +131,8 @@ if __name__ == "__main__":
 
     # Visualization module
     vis_module = None
-    if baseArgs.np_vis:
+    #if baseArgs.np_vis:
+    if True:
         vis_module = importlib.import_module("visualization.np_visualizer")
     elif baseArgs.no_vis:
         print("Visualization disabled")
@@ -142,8 +145,14 @@ if __name__ == "__main__":
     pathDB = trainingConfig["pathDB"]
     trainingConfig.pop("pathDB", None)
 
-    partitionValue = getVal(kwargs, "partition_value",
-                            trainingConfig.get("partitionValue", None))
+    partitionValue = getVal(kwargs, "partition_value", trainingConfig.get("partitionValue", None))
+    if rob_kluge:
+        print("rob kluge: printing trainingConfig")
+        print(trainingConfig)
+        #print("rob kluge: print arguments passed to trainerModule:%s" % ','.join(["'%s':%s" for k,str(v) in {'visualisation':"need to import importlib.import_module('visualization.np_visualizer')", 'lossIterEvaluation':kwargs["evalIter"], 'checkPointDir':checkPointDir, 'saveIter':kwargs["saveIter"], 'modelLabel':modelLabel, 'partitionValue':partitionValue}.items()]))
+        #print(','.join(["'%s':%s"%(k,str(v))  for k,v in {'visualisation':"need to import importlib.import_module('visualization.visualizer')", 'lossIterEvaluation':kwargs["evalIter"], 'checkPointDir':checkPointDir, 'saveIter':kwargs["saveIter"], 'modelLabel':modelLabel, 'partitionValue':partitionValue}.items()]))
+        print("rob kluge: exiting")
+        sys.exit()
     
     GANTrainer = trainerModule(pathDB,
                                useGPU=True,
@@ -161,4 +170,4 @@ if __name__ == "__main__":
         print(f"Model found at path {pathModel}, pursuing the training")
         GANTrainer.loadSavedTraining(pathModel, trainConfig, pathTmpData)
 
-    GANTrainer.train()
+    #GANTrainer.train()
