@@ -5,12 +5,13 @@ import pickle as pkl
 
 import torch
 import torchvision.transforms as Transforms
+import albumentations as A
+import cv2
 
 from ..utils.config import getConfigFromDict, getDictFromConfig, BaseConfig
-from ..utils.image_transform import NumpyResize, NumpyToTensor
+from ..utils.image_transform import NumpyResize, NumpyToTensor, ToTensorV2
 from ..datasets.attrib_dataset import AttribDataset
 from ..datasets.hd5 import H5Dataset
-
 
 class GANTrainer():
     r"""
@@ -32,7 +33,8 @@ class GANTrainer():
                  imagefolderDataset=False,
                  ignoreAttribs=False,
                  pathPartition=None,
-                 partitionValue=None):
+                 partitionValue=None,
+                 albumentations_transformations=None):
         r"""
         Args:
             - pathdb (string): path to the directorty containing the image
@@ -70,10 +72,16 @@ class GANTrainer():
         self.path_db = pathdb
         self.pathPartition = pathPartition
         self.partitionValue = partitionValue
-
+        # Albumentations
+        self.albumentations_transformations = albumentations_transformations
+        if self.albumentations_transformations is None:
+            print("using default transformation")
+        else:
+            print("using Albumentations transformation")
+        
         if config is None:
             config = {}
-
+        
         # Load the training configuration
         self.readTrainConfig(config)
 
@@ -415,15 +423,26 @@ class GANTrainer():
         isH5 = os.path.splitext(self.path_db)[1] == ".h5"
 
         print("size", size)
-        transformList = [NumpyResize(size),
-                         NumpyToTensor(),
-                         Transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
-
-        if self.modelConfig.dimOutput == 1:
-            transformList = [Transforms.Grayscale(1)] + transformList
-
-        transform = Transforms.Compose(transformList)
-
+        if self.albumentations_transformations is None:
+            transformList = [NumpyResize(size),
+                            NumpyToTensor(),
+                            Transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+            
+            if self.modelConfig.dimOutput == 1:
+                transformList = [Transforms.Grayscale(1)] + transformList
+            
+            transform = Transforms.Compose(transformList)
+        else:
+            #transform = A.Compose([A.RandomGridShuffle(always_apply=False, p=0.05, grid=(2, 2)),
+            #           A.transforms.GridDistortion(num_steps=5, distort_limit=0.4, p=0.5),
+            #           A.HorizontalFlip(p=0.5),
+            #           A.RandomResizedCrop(always_apply=True, p=1.0, height=size, width=size,
+            #                             scale=(0.75, 1),
+            #                             ratio=(0.98, 1.02), interpolation=3),#ONLY 3 SEEMS TO WORK
+            #           A.transforms.ColorJitter(brightness=0.05, contrast=0.07, saturation=0.04, hue=0.07, always_apply=False, p=0.6)#HSV random
+            #           ])
+            transform = self.albumentations_transformations(size)
+        
         if isH5:
             return H5Dataset(self.path_db,
                              partition_path=self.pathPartition,
