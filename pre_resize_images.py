@@ -110,6 +110,71 @@ for path_old, path_new, old_dimension in paths_to_files:
     else:
         shutil.copyfile(path_old, path_new) 
 
+################
+# manually flip some of the abstract paintings vertically/horizontally
+images_to_flip_horizontally = ["../../../data/impression_pureabstract/0a10e4a15632b0939ce80ab517839a85.jpg","../../../data/impression_pureabstract/2ab9b409793acca1ea7ba805c5cd9f28.jpg","../../../data/impression_pureabstract/2A71A49D-7F06-4D35-AF5D-5DA576743FF4.JPG","../../../data/impression_pureabstract/2cde25c633bef8c165bd5a4c2cbbfd61.jpg","../../../data/impression_pureabstract/5d6c310f1a2c8b801bef020b84f42a42.jpg","../../../data/impression_pureabstract/6a78d139c5c8ea726e2a5ab71d4730b5.jpg","../../../data/impression_pureabstract/8dac4ef6862a364d2bcfbdfa4a336433.jpg","../../../data/impression_pureabstract/8x10czkqmse31.jpg","../../../data/impression_pureabstract/395d6f26148443.5635059799b28.jpg","../../../data/impression_pureabstract/589a826e03b972eba916577be422c7ee.jpg","../../../data/impression_pureabstract/10186%20-%20Aloft%2030%2008%2018.JPG","../../../data/impression_pureabstract/10204%20-%2020%2011%2018.JPG","../../../data/impression_pureabstract/10205%20-%20Storm%20Signed%2021%2011%2018.JPG","../../../data/impression_pureabstract/10207%20-%20Downpour%20-%2022%2011%2018%20signed.JPG","../../../data/impression_pureabstract/10210%20-%20Converge%2027%2011%2018.jpg","../../../data/impression_pureabstract/105148_1.jpg","../../../data/impression_pureabstract/60045646_616876865495823_1421327681814790144_o.jpg","../../../data/impression_pureabstract/109898162_3134160280013618_5519726051067852188_o.jpg","../../../data/impression_pureabstract/110179113_3134160306680282_3556583195638535398_o.jpg","../../../data/impression_pureabstract/ae4cc7ca51af703094311b9055e83db1.jpg","../../../data/impression_pureabstract/a-place-to-be-i-main.jpg","../../../data/impression_pureabstract/art2.png","../../../data/impression_pureabstract/art3.png","../../../data/impression_pureabstract/art6.png","../../../data/impression_pureabstract/art7.png","../../../data/impression_pureabstract/art12.png","../../../data/impression_pureabstract/art15.png","../../../data/impression_pureabstract/art21.png","../../../data/impression_pureabstract/art24.png","../../../data/impression_pureabstract/art29.png","../../../data/impression_pureabstract/art37.png","../../../data/impression_pureabstract/art45.png","../../../data/impression_pureabstract/art48.png","../../../data/impression_pureabstract/blue-dusk.jpg","../../../data/impression_pureabstract/c2c78a3c83fb610431215fae96e52e6f.jpg","../../../data/impression_pureabstract/e6e276e56ee83a3c96f12038fbf33cc7.jpg","../../../data/impression_pureabstract/H0649-L13590363.jpg","../../../data/impression_pureabstract/iheartheclockitsticking-798x800.jpg","../../../data/impression_pureabstract/salary-scale-ulla-maria-johanson-2016-64b4b10b.jpg","../../../data/impression_pureabstract/Tao Triptych.jpg","../../../data/impression_pureabstract/tumblr_o05b7yy7cn1r9594zo1_540.jpg","../../../data/impression_pureabstract/veitart_baoha_sm_red.JPG","../../../data/impression_pureabstract/vietart_baoha_crap2.JPG","../../../data/impression_pureabstract/vietart_baoha_sm_blue.JPG"]
+
+images_to_flip_vertically = ["../../../data/impression_pureabstract/0a10e4a15632b0939ce80ab517839a85.jpg","../../../data/impression_pureabstract/2A71A49D-7F06-4D35-AF5D-5DA576743FF4.JPG","../../../data/impression_pureabstract/2ab9b409793acca1ea7ba805c5cd9f28.jpg","../../../data/impression_pureabstract/2cde25c633bef8c165bd5a4c2cbbfd61.jpg","../../../data/impression_pureabstract/5d6c310f1a2c8b801bef020b84f42a42.jpg","../../../data/impression_pureabstract/240.jpg","../../../data/impression_pureabstract/386_7__DxO.jpg",'../../../data/impression_pureabstract/2237bfc6dce338f486b176a123698968.jpg',"../../../data/impression_pureabstract/10210%20-%20Converge%2027%2011%2018.jpg","../../../data/impression_pureabstract/398109w550.jpg","../../../data/impression_pureabstract/60045646_616876865495823_1421327681814790144_o.jpg","../../../data/impression_pureabstract/Abstract-Oil-painting-Melody-for-Guitar-and-Sax-Silvia-Vassileva-Painting-Modern-Canvas-art-Room-decor.jpg","../../../data/impression_pureabstract/110318719_3134160330013613_2888548261907595138_o.jpg","../../../data/impression_pureabstract/acumen_by_narcisse_shrapnel_d2sibni-fullview.jpg","../../../data/impression_pureabstract/animax0.jpg","../../../data/impression_pureabstract/a-place-to-be-i-main.jpg","../../../data/impression_pureabstract/art.png","../../../data/impression_pureabstract/art3.png","../../../data/impression_pureabstract/art5.png","../../../data/impression_pureabstract/art7.png","../../../data/impression_pureabstract/art8.png","../../../data/impression_pureabstract/art11.png","../../../data/impression_pureabstract/art25.png","../../../data/impression_pureabstract/art26.png","../../../data/impression_pureabstract/art37.png","../../../data/impression_pureabstract/art38.png","../../../data/impression_pureabstract/art40.png","../../../data/impression_pureabstract/art43.png","../../../data/impression_pureabstract/art46.png","../../../data/impression_pureabstract/art49.png","../../../data/impression_pureabstract/art51.png","../../../data/impression_pureabstract/art53.png","../../../data/impression_pureabstract/art54.png","../../../data/impression_pureabstract/aYXHay5.jpg","../../../data/impression_pureabstract/d190cca1c8d080e6fcb389a416d3e297.jpg","../../../data/impression_pureabstract/Echoes of Summer 80cm x 80cm Oil on Canvas main.jpg","../../../data/impression_pureabstract/ef78191a3e731c038ead5b55b11e1cba.jpg","../../../data/impression_pureabstract/iheartheclockitsticking-798x800.jpg","../../../data/impression_pureabstract/Midnight Sun16 x 16 Oil on Constructed Aluminium Panel.jpg","../../../data/impression_pureabstract/morning-fjord-silvia-vassileva.jpg","../../../data/impression_pureabstract/Reflections-in-Red-3.jpg","../../../data/impression_pureabstract/street-sketch.jpg","../../../data/impression_pureabstract/veitart_baoha_sm_red.JPG","../../../data/impression_pureabstract/vietart_baoha_crap2.JPG","../../../data/impression_pureabstract/vietart_baoha_sm_blue.JPG","../../../data/impression_pureabstract/White-Reflections-3.jpg","../../../data/impression_pureabstract/williamWray-Conflagrant24x18.jpg"]
+
+def downscale_and_rotate(path_to_image, threshold, flip=None, rotate=None, path_to_new_image = None, plot=None):
+    """ use albumentations to downscale an image"""
+    if plot is None:
+        plot = False
+    if flip is None:
+        flip = False
+    if rotate is None:
+        rotate = False
+    # get the old dim
+    dim_old = get_img_dim(path_to_image)
+    # get the image
+    img = cv2.imread(path_to_image)
+    
+    # do flip?
+    if flip:
+        instruction = cv2.ROTATE_180
+        img_rt = cv2.rotate(img, instruction)
+        suffix_ = '_flp'
+    
+    if rotate:
+        # random rotation 270 or 90
+        if (hash(path_to_image) % 2) ==0:
+            instruction = cv2.ROTATE_90_COUNTERCLOCKWISE
+        else:
+            instruction = cv2.ROTATE_90_CLOCKWISE
+        img_rt = cv2.rotate(img, instruction)
+        # rotate the dimension
+        dim_old = dim_old[::-1]
+        # make suffix
+        suffix_ = '_rt'
+    
+    # check if the image needs to be resized, as well
+    if check_image_requires_resizing(image_dimensions=dim_old, threshold=threshold):
+        dim_new = new_dimension( dim_old, threshold)
+        img_rt = cv2.resize(img_rt, tuple(dim_new), interpolation=cv2.INTER_AREA)
+    
+    # whether to save an image
+    if not (path_to_new_image is None):
+        path_split1,ext_ = os.path.splitext(path_to_new_image)
+        # add suffix
+        path_to_new_image_rt = path_split1 + suffix_ + ext_
+        cv2.imwrite(path_to_new_image_rt, img_rt)
+    
+    # whether to plot an image
+    if plot:
+        plt.imshow(img_rt); plt.show()
+    
+    return img_rt
+
+# flip and rotate images
+for f in images_to_flip_vertically:
+    f_new = [path[1] for path in paths_to_files if path[0] == f][0]
+    _ = downscale_and_rotate(path_to_image=f, threshold = thres_pixels, flip=True, rotate=False, path_to_new_image = f_new, plot=False)
+
+for f in images_to_flip_horizontally:
+    f_new = [path[1] for path in paths_to_files if path[0] == f][0]
+    _ = downscale_and_rotate(path_to_image=f, threshold = thres_pixels, flip=False, rotate=True, path_to_new_image = f_new, plot=False)
+    
+
 # play with opening and saving images in ONE color channel format
 # i = 0
 # i+=1
@@ -130,3 +195,5 @@ for path_old, path_new, old_dimension in paths_to_files:
 # #img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
 # img2 = cv2.resize(img2, tuple([int(i*0.8) for i in rev(img2.shape[0:2])]), interpolation=cv2.INTER_AREA)
 # cv2.imwrite(path_new_3,img2)
+
+# list of (abstract) paintings that can be flipped either horizontally or vertically
