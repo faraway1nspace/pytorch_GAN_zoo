@@ -10,6 +10,9 @@ from models.utils.config import getConfigOverrideFromParser, \
 
 import json
 
+import albumentations as A
+import cv2
+from models.utils.image_transform import pil_loader, ToTensorV2
 
 def getTrainer(name):
 
@@ -29,7 +32,8 @@ class AlbumentationsTransformations(object):
     def __init__(self, size):
         if isinstance(size,int):
             size = (size,size)
-        self.A_Compose = A.Compose([A.RandomGridShuffle(always_apply=False, p=0.05, grid=(2, 2)),
+        self.A_Compose = A.Compose([A.ChannelShuffle(always_apply=False, p=0.1),
+                                    A.RandomGridShuffle(always_apply=False, p=0.05, grid=(2, 2)),
                        A.transforms.GridDistortion(num_steps=5, distort_limit=0.4, p=0.5),
                        A.HorizontalFlip(p=0.5),
                        A.RandomResizedCrop(always_apply=True, p=1.0, height=size[0], width=size[0],
@@ -146,19 +150,20 @@ if __name__ == "__main__":
                             trainingConfig.get("partitionValue", None))
     
     GANTrainer = trainerModule(pathDB,
-                               useGPU=True,
+                               useGPU=False,
                                visualisation=vis_module,
                                lossIterEvaluation=kwargs["evalIter"],
                                checkPointDir=checkPointDir,
                                saveIter= kwargs["saveIter"],
                                modelLabel=modelLabel,
                                partitionValue=partitionValue,
+                               albumentations_transformations = AlbumentationsTransformations,
                                **trainingConfig)
 
     # If a checkpoint is found, load it
     if not restart and checkPointData is not None:
         trainConfig, pathModel, pathTmpData = checkPointData
         print(f"Model found at path {pathModel}, pursuing the training")
-        GANTrainer.loadSavedTraining(pathModel, trainConfig, pathTmpData)
+        GANTrainer.loadSavedTraining(pathModel, trainConfig, pathTmpData, kwargs["dir"])
 
     GANTrainer.train()
