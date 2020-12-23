@@ -1,5 +1,5 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
-import os
+import os #
 import time
 import json
 import math
@@ -341,3 +341,41 @@ def saveScore(outPath, outValue, *args):
         json.dump(fullDict, file, indent=2)
 
     os.remove(flagPath)
+
+def rebase_path(dir_origin, dir_replace, check_replace_dir = True):
+    """changes the deep-directories of a directory whose full-path no longer exists, remapping to a local directory """
+    
+    if dir_replace[-1]!="/":
+        dir_replace+="/"
+    
+    if check_replace_dir:
+        assert os.path.isdir(dir_replace)
+    
+    split_origin_dir, split_origin_object = os.path.split(dir_origin)
+    split_replace_dir, split_replace_object = os.path.split(dir_replace)
+    
+    split_replace_dir_v = split_replace_dir.split("/")
+    split_origin_dir_v = split_origin_dir.split("/")    
+    
+    # find equivalent path structures
+    matching_dir_structures = [f for f,o in zip(split_replace_dir_v[::-1], split_origin_dir_v[::-1]) if f==o][::-1]
+    
+    # get the missing deep structure not in the origin
+    missing_dir_structures= [f for f,o in zip(split_replace_dir_v[::-1], split_origin_dir_v[::-1]+[None]*100) if f!=o][::-1]
+    
+    # concatenate
+    dir_rebased = "/".join(missing_dir_structures+matching_dir_structures)
+    
+    # add leading /
+    #if split_replace_dir_v[0] == "":
+    #    dir_rebased="/"+dir_rebased
+    
+    # add training /
+    if dir_replace[-1] == "/":
+        dir_rebased+="/"
+    
+    # add object
+    if len(split_origin_object)>0:
+        dir_rebased += split_origin_object
+    
+    return dir_rebased
