@@ -131,8 +131,10 @@ class ProgressiveGAN(BaseGAN):
         self.getOriginalD().setNewAlpha(newAlpha)
 
         if self.avgG:
-            #self.avgG.module.setNewAlpha(newAlpha)
-            self.avgG.setNewAlpha(newAlpha) # 
+            if isinstance(self.avgG, nn.DataParallel):
+                self.avgG.module.setNewAlpha(newAlpha)
+            else:
+                self.avgG.setNewAlpha(newAlpha) # 
         
         self.config.alpha = newAlpha
 
