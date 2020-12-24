@@ -1,5 +1,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import torch.optim as optim
+import torch.nn.DataParallel as DataParallel
 
 from .base_GAN import BaseGAN
 from .utils.config import BaseConfig
@@ -131,10 +132,12 @@ class ProgressiveGAN(BaseGAN):
         self.getOriginalD().setNewAlpha(newAlpha)
 
         if self.avgG:
-            if isinstance(self.avgG, nn.DataParallel):
-                self.avgG.module.setNewAlpha(newAlpha)
+            if 'setNewAlpha' in dir(self.avgG):
+                self.avgG.setNewAlpha(newAlpha)
+            else if ('setNewAlpha' in dir(self.avgG.module)):
+                self.avgG.module.setNewAlpha(newAlpha) #
             else:
-                self.avgG.setNewAlpha(newAlpha) # 
+                self.avgG.setNewAlpha(newAlpha)
         
         self.config.alpha = newAlpha
 
