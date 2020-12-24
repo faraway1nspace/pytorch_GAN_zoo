@@ -134,7 +134,7 @@ class ProgressiveGAN(BaseGAN):
         if self.avgG:
             if 'setNewAlpha' in dir(self.avgG):
                 self.avgG.setNewAlpha(newAlpha)
-            else if ('setNewAlpha' in dir(self.avgG.module)):
+            elif ('setNewAlpha' in dir(self.avgG.module)):
                 self.avgG.module.setNewAlpha(newAlpha) #
             else:
                 self.avgG.setNewAlpha(newAlpha)
