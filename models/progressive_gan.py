@@ -1,6 +1,5 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import torch.optim as optim
-import torch.nn.DataParallel as DataParallel
 
 from .base_GAN import BaseGAN
 from .utils.config import BaseConfig
