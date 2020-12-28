@@ -6,7 +6,8 @@ from ..progressive_gan import ProgressiveGAN
 from .gan_trainer import GANTrainer
 from ..utils.utils import getMinOccurence
 import torch.nn.functional as F
-
+from torch.cuda import empty_cache
+import gc
 
 class ProgressiveGANTrainer(GANTrainer):
     r"""
@@ -256,7 +257,13 @@ class ProgressiveGANTrainer(GANTrainer):
                 break
 
             self.model.addScale(self.modelConfig.depthScales[scale + 1])
-
+            
+            # clear memory (see if this helps)
+            clear_mem = True
+            if clear_mem:
+                gc.collect()
+                empty_cache()
+        
         self.startScale = n_scales
         self.startIter = self.modelConfig.maxIterAtScale[-1]
         return True
